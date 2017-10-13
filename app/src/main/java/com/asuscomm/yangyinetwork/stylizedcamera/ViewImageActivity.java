@@ -11,6 +11,8 @@ import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -68,10 +70,14 @@ public class ViewImageActivity extends AppCompatActivity {
                 saveOnFbDatabase(downloadUrl);
             }
         });
-
     }
 
     private void saveOnFbDatabase(Uri downloadUrl) {
+        Log.d(TAG, "saveOnFbDatabase: ");
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("uploaded_tasks");
 
+        Task task = new Task(downloadUrl.toString());
+        myRef.push().setValue(task);
     }
 }
