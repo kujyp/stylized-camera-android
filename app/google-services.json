@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "596082271992",
+    "firebase_url": "https://styletransfer-ba06f.firebaseio.com",
+    "project_id": "styletransfer-ba06f",
+    "storage_bucket": "styletransfer-ba06f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:596082271992:android:8888a7d329fe7b86",
+        "android_client_info": {
+          "package_name": "com.asuscomm.yangyinetwork.stylizedcamera"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "596082271992-81f62qr6h2nenodpsrdbej5011c5h4r3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9sd1HXDqLlhIBsVCKtCJhUbKrtFS62tM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
