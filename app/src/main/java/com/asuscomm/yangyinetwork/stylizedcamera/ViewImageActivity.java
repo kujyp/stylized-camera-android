@@ -7,12 +7,11 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,6 +21,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,9 +37,12 @@ public class ViewImageActivity extends AppCompatActivity {
 
     public static final String TAG = ViewImageActivity.class.getSimpleName();
 
-    @BindView(R.id.imageView)
-    ImageView mImageView;
+    @BindView(R.id.iv_origin)
+    ImageView mIvOrigin;
+    @BindView(R.id.iv_result)
+    ImageView mIvResult;
     private String styleName;
+    private ValueEventListener mListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +53,8 @@ public class ViewImageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         Uri imageUri = intent.getData();
-        Picasso.with(this).load(imageUri).into(mImageView);
+        Picasso.with(this).load(imageUri).into(mIvOrigin);
+
 
         saveOnFbStorage(imageUri);
     }
@@ -95,9 +102,40 @@ public class ViewImageActivity extends AppCompatActivity {
             @Override
             public void onFinish(String style) {
                 Task task = new Task(downloadUrl.toString(), path, style);
-                myRef.push().setValue(task);
+                DatabaseReference ref = myRef.push();
+                String key = ref.getKey();
+                ref.setValue(task);
+                addDoneListener(key);
             }
         });
+    }
+
+    private void addDoneListener(String key) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference ref = database.getReference("done_tasks").child(key);
+        mListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() == null) {
+                    return;
+                }
+                String uploadedUrl = (String) ((HashMap) dataSnapshot.getValue()).get("uploadedUrl");
+                loadResultPicture(uploadedUrl);
+
+                ref.removeEventListener(mListener);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        ref.addValueEventListener(mListener);
+    }
+
+    private void loadResultPicture(String uploadedUrl) {
+        Log.d(TAG, "loadResultPicture: uploadedUrl="+ uploadedUrl);
+        Picasso.with(this).load(uploadedUrl).into(mIvResult);
     }
 
     interface OnFinishListener {
